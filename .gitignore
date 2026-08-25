@@ -1,0 +1,28 @@
+# Data (large, obtained separately — see data/README.md)
+data/raw/
+data/processed/
+
+# Model artifacts
+checkpoints/
+*.pt
+*.pth
+*.txt.model
+*.joblib
+
+# Experiment tracking
+wandb/
+runs/
+experiments/results/**/*.ckpt
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.env
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

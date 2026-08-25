@@ -1,0 +1,27 @@
+# Core ML
+torch
+scikit-learn
+lightgbm
+numpy
+pandas
+
+# PE parsing and disassembly
+pefile
+capstone
+
+# EMBER dataset tooling
+# (EMBER2024 provides its own feature extraction; install per data/README.md)
+lief
+
+# Experiment tracking
+wandb
+tensorboard
+
+# Config and utilities
+pyyaml
+tqdm
+
+# Analysis and plotting
+matplotlib
+seaborn
+jupyter
