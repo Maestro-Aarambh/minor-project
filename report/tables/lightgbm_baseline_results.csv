@@ -1,0 +1,12 @@
+Metric,Standard test set,Evasive challenge set,Drop-off (standard − evasive)
+Accuracy,0.9721,0.9559,0.0162
+Precision,0.9686,0.7468,0.2218
+Recall,0.9759,0.8432,0.1327
+F1,0.9722,0.7921,0.1802
+ROC-AUC,0.9966,0.9717,0.0249
+PR-AUC,0.9967,0.8876,0.1091
+TPR @ 1% FPR,0.9189,0.7069,0.2121
+Challenge-only detection rate,—,0.8432,—
+N samples (standard),15000,,
+N samples (challenge eval),,8329,
+N challenge-only malicious,,829,

@@ -9,9 +9,11 @@ pandas
 pefile
 capstone
 
-# EMBER dataset tooling
-# (EMBER2024 provides its own feature extraction; install per data/README.md)
-lief
+# EMBER2024 dataset tooling (install from GitHub — not on PyPI)
+# pip install "git+https://github.com/FutureComputing4AI/EMBER2024.git"
+# thrember requires this pinned version on Python 3.13:
+signify==0.7.1
+huggingface_hub
 
 # Experiment tracking
 wandb

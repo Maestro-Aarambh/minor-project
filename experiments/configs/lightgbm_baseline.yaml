@@ -1,0 +1,52 @@
+# LightGBM baseline on EMBER2024 Win64 static features
+# All hyperparameters live here — never hardcode them in model code.
+
+experiment:
+  name: lightgbm_dotnet_baseline
+  seed: 42
+  description: >
+    Stage-2 LightGBM baseline on EMBER feature v3 static vectors (.NET PE subset).
+    Chosen for the first runnable baseline because Win32/Win64 raw archives are
+    15–29 GB and exceed practical download + 16 GB RAM limits on a laptop.
+    Same pipeline / config pattern applies to Win64/Win32 later.
+    Compares standard temporal test set vs evasive challenge set.
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed/static_dotnet
+  # thrember file_type name for .NET is Dot_Net
+  file_type: Dot_Net
+  train_max_samples: 40000
+  test_max_samples: 15000
+  # Cap weekly JSONL files so vectorization finishes on a laptop
+  train_max_files: 8
+  test_max_files: 4
+  # challenge is always used in full (filtered to same file_type)
+
+model:
+  name: lightgbm
+  val_fraction: 0.1
+  params:
+    objective: binary
+    boosting: gbdt
+    num_iterations: 500
+    learning_rate: 0.1
+    num_leaves: 64
+    min_data_in_leaf: 100
+    bagging_fraction: 0.9
+    bagging_freq: 1
+    feature_fraction: 0.9
+    lambda_l2: 1.0
+    is_unbalance: true
+    metric: [auc, binary_logloss]
+    verbosity: -1
+    seed: 42
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/lightgbm_dotnet_baseline
+  report_table: report/tables/lightgbm_baseline_results
+  model_path: experiments/results/lightgbm_dotnet_baseline/model.txt

@@ -1,0 +1,71 @@
+{
+  "experiment_name": "lightgbm_dotnet_baseline",
+  "description": "Stage-2 LightGBM baseline on EMBER feature v3 static vectors (.NET PE subset). Chosen for the first runnable baseline because Win32/Win64 raw archives are 15\u201329 GB and exceed practical download + 16 GB RAM limits on a laptop. Same pipeline / config pattern applies to Win64/Win32 later. Compares standard temporal test set vs evasive challenge set.",
+  "config_path": "experiments/configs/lightgbm_baseline.yaml",
+  "file_type": "Dot_Net",
+  "seed": 42,
+  "n_train": 40000,
+  "feature_dim": 2568,
+  "train_seconds": 77.08716129999993,
+  "model_params": {
+    "objective": "binary",
+    "boosting": "gbdt",
+    "num_iterations": 500,
+    "learning_rate": 0.1,
+    "num_leaves": 64,
+    "min_data_in_leaf": 100,
+    "bagging_fraction": 0.9,
+    "bagging_freq": 1,
+    "feature_fraction": 0.9,
+    "lambda_l2": 1.0,
+    "is_unbalance": true,
+    "metric": [
+      "auc",
+      "binary_logloss"
+    ],
+    "verbosity": -1,
+    "seed": 42
+  },
+  "metrics": {
+    "standard_test": {
+      "n_samples": 15000,
+      "n_malicious": 7500,
+      "n_benign": 7500,
+      "threshold": 0.5,
+      "accuracy": 0.9721333333333333,
+      "precision": 0.9686341979883536,
+      "recall": 0.9758666666666667,
+      "f1": 0.9722369819341127,
+      "roc_auc": 0.9966244266666667,
+      "pr_auc": 0.9966921268984363,
+      "tpr_at_fpr_1pct": 0.9189333333333334,
+      "fpr_at_report_point": 0.01
+    },
+    "evasive_challenge": {
+      "n_samples": 8329,
+      "n_malicious": 829,
+      "n_benign": 7500,
+      "threshold": 0.5,
+      "accuracy": 0.9559370872853884,
+      "precision": 0.7467948717948718,
+      "recall": 0.8431845597104946,
+      "f1": 0.7920679886685552,
+      "roc_auc": 0.9717101728990754,
+      "pr_auc": 0.8876117089450798,
+      "tpr_at_fpr_1pct": 0.706875753920386,
+      "fpr_at_report_point": 0.01,
+      "challenge_only_detection_rate": 0.8431845597104946,
+      "challenge_only_n": 829
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": 0.016196246047944896,
+      "precision": 0.2218393261934818,
+      "recall": 0.1326821069561721,
+      "f1": 0.18016899326555746,
+      "roc_auc": 0.024914253767591377,
+      "pr_auc": 0.10908041795335655,
+      "tpr_at_fpr_1pct": 0.21205757941294734
+    }
+  },
+  "generated_at_utc": "2026-08-25T21:16:00.652807+00:00"
+}

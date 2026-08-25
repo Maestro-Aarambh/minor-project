@@ -62,46 +62,53 @@ src/
 
 ---
 
-## Chapter 1 — Data pipeline (`src/data/`)  [NOT YET IMPLEMENTED]
+## Chapter 1 — Data pipeline (`src/data/`)  [IN PROGRESS]
 
-**Goal:** turn raw EMBER2024 into three parallel representations of each PE
-file, plus clean train / test / evasive splits.
+**Goal:** turn raw EMBER2024 into model-ready inputs, plus clean train / test /
+evasive splits.
 
-Planned modules (to be documented as they are written):
+### Implemented so far
+
+| Module | Job | Why it was built this way |
+|--------|-----|---------------------------|
+| `download_ember.py` | Fetch EMBER2024 train/test/challenge zips via `thrember` into `data/raw/` | Official HuggingFace distribution; restores `cwd` after thrember's `os.chdir` |
+| `static_features.py` | Vectorize JSONL → EMBER feature-v3 vectors (dim 2568), with optional stratified subsample | LightGBM needs static features first; full Win32 does not fit in 16 GB RAM, so we default to **Win64** + capped train/test samples while keeping the **challenge set in full** |
+| `imbalance.py` | Inverse-frequency class / sample weights | Makes imbalance handling explicit and reusable by later models |
+
+### Design decisions (paper-relevant)
+
+1. **Win64 instead of Win32 for the first baseline.** Win32 train features alone are ~24 GB; after vectorization they exceed typical 16 GB laptop RAM. Win64 is still Windows PE and preserves the PE research focus. Scaling to full Win32 is a config change, not a code rewrite.
+2. **Stratified subsample for train/test, full challenge.** The research question lives on the evasive set (~6.3k). Subsampling the temporal split is an engineering necessity and is recorded in the config / results JSON so the paper can state exact N.
+3. **Challenge ROC protocol.** Follow EMBER2024's official eval: mix challenge malware with test benign before ROC/PR (challenge alone is all-malicious, so ROC-AUC is undefined).
+
+### Still planned
 
 | Module | Job | Why it exists |
 |--------|-----|---------------|
-| `download.py` | Fetch/verify EMBER2024 archives into `data/raw/` | Reproducibility: anyone can rebuild the dataset from scratch |
-| `byte_features.py` | Raw byte-sequence n-grams | The "no domain knowledge" representation — tests whether models learn structure themselves |
-| `opcode_features.py` | Disassembled opcode sequences via Capstone | Metamorphic malware rewrites bytes but must preserve *behavior*; opcodes sit closer to behavior than raw bytes |
-| `static_features.py` | EMBER's engineered header/import/section features | The classical-ML representation the tree baselines need |
-| `splits.py` | Temporal train/test split + evasive challenge subset | The temporal split tests concept drift; the evasive subset is the entire point of the study |
-| `imbalance.py` | Stratified sampling / class-weight computation | Malware datasets are imbalanced; without this, accuracy numbers are misleading |
-
-Decisions to record when implementing: sequence truncation length (and what
-fraction of files it covers), n-gram size, Capstone architecture mode
-(x86/x64 handling), how ties between representations are kept aligned per
-sample.
+| `byte_features.py` | Raw byte-sequence n-grams | No-domain-knowledge representation for CNN/LSTM/transformer |
+| `opcode_features.py` | Capstone opcode sequences | Closer to behavior under metamorphic rewriting |
+| `splits.py` | Explicit temporal / challenge split helpers | Shared by all input representations |
 
 ---
 
-## Chapter 2 — Baseline models (`src/models/baselines/`)  [NOT YET IMPLEMENTED]
+## Chapter 2 — Baseline models (`src/models/baselines/`)  [IN PROGRESS]
 
-**Goal:** establish the performance floor the transformer must beat, using
-architectures the literature already trusts.
+**Goal:** establish the performance floor the transformer must beat.
 
-Planned modules:
+### Implemented so far
 
-| Module | Job | Why it exists |
-|--------|-----|---------------|
-| `../base.py` | `BaseClassifier` interface | One harness, four models — makes the comparison provably fair |
-| `lightgbm_model.py` | Gradient-boosted trees on static features | The strongest published classical baseline on EMBER-style features |
-| `cnn_model.py` | 1D CNN on byte sequences | Tests whether *local* byte patterns are enough (CNNs see only fixed windows) |
-| `lstm_model.py` | LSTM/BiLSTM on byte sequences | Tests *sequential* modeling without attention — the direct foil to the transformer |
+| Module | Job | Why |
+|--------|-----|-----|
+| `src/models/base.py` | Shared `fit / predict_proba / save / load` | Fair comparison across models |
+| `lightgbm_model.py` | LightGBM on static EMBER vectors | Strongest classical EMBER baseline |
+| `src/evaluation/metrics.py` | Accuracy, P/R/F1, ROC-AUC, PR-AUC, TPR@1% FPR | Paper metric suite |
+| `src/evaluation/evasive_eval.py` | Standard vs challenge + drop-off | Central research measurement |
+| `src/evaluation/write_results.py` | JSON + CSV + Markdown tables | Paste-ready report artifacts |
+| `run_lightgbm_baseline.py` | End-to-end entry point | One command for the whole baseline |
 
-The baselines are deliberately standard implementations. Any tuning applied
-to the transformer (learning-rate schedule, early stopping budget) is applied
-equally here, and that will be documented in this chapter.
+First runnable file type is `Dot_Net` (config swap to Win64/Win32 later). Hyperparameters live in `experiments/configs/lightgbm_baseline.yaml`.
+
+Still planned: `cnn_model.py`, `lstm_model.py`.
 
 ---
 
