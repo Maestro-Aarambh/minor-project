@@ -1,0 +1,71 @@
+{
+  "experiment_name": "lightgbm_win64_baseline",
+  "description": "LightGBM baseline on EMBER2024 Win64 static features. Standard test vs evasive challenge drop-off comparison.",
+  "config_path": "experiments/configs/lightgbm_win64_baseline.yaml",
+  "file_type": "Win64",
+  "seed": 42,
+  "n_train": 120000,
+  "feature_dim": 2568,
+  "train_seconds": 586.916528085,
+  "model_params": {
+    "objective": "binary",
+    "boosting": "gbdt",
+    "num_iterations": 500,
+    "learning_rate": 0.1,
+    "num_leaves": 64,
+    "min_data_in_leaf": 100,
+    "bagging_fraction": 0.9,
+    "bagging_freq": 1,
+    "feature_fraction": 0.9,
+    "lambda_l2": 1.0,
+    "is_unbalance": true,
+    "metric": [
+      "auc",
+      "binary_logloss"
+    ],
+    "verbosity": -1,
+    "seed": 42
+  },
+  "metrics": {
+    "standard_test": {
+      "n_samples": 40000,
+      "n_malicious": 20000,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.98055,
+      "precision": 0.9842789478988209,
+      "recall": 0.9767,
+      "f1": 0.9804748280881393,
+      "roc_auc": 0.9979698725,
+      "pr_auc": 0.9981363802810919,
+      "tpr_at_fpr_1pct": 0.967,
+      "fpr_at_report_point": 0.0099
+    },
+    "evasive_challenge": {
+      "n_samples": 20814,
+      "n_malicious": 814,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.966945325261843,
+      "precision": 0.584,
+      "recall": 0.538083538083538,
+      "f1": 0.5601023017902813,
+      "roc_auc": 0.9297278255528254,
+      "pr_auc": 0.560225963915881,
+      "tpr_at_fpr_1pct": 0.4606879606879607,
+      "fpr_at_report_point": 0.00985,
+      "challenge_only_detection_rate": 0.538083538083538,
+      "challenge_only_n": 814
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": 0.013604674738157074,
+      "precision": 0.4002789478988209,
+      "recall": 0.438616461916462,
+      "f1": 0.42037252629785804,
+      "roc_auc": 0.06824204694717462,
+      "pr_auc": 0.4379104163652109,
+      "tpr_at_fpr_1pct": 0.5063120393120393
+    }
+  },
+  "generated_at_utc": "2026-08-30T12:19:36.599769+00:00"
+}
