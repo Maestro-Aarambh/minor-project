@@ -99,11 +99,15 @@ def write_results(
         )
 
     md_path = report_stem.with_suffix(".md")
+    model_label = payload.get("model_label", "LightGBM on EMBER feature v3 static vectors")
+    input_desc = payload.get("input_description", "EMBER feature v3 static vectors (dim 2568)")
+    title = payload.get("report_title", "Baseline Results (EMBER2024)")
     lines = [
-        "# LightGBM Baseline Results (EMBER2024)",
+        f"# {title}",
         "",
         f"**Experiment:** `{payload.get('experiment_name', '')}`  ",
-        f"**Model:** LightGBM on EMBER feature v3 static vectors  ",
+        f"**Model:** {model_label}  ",
+        f"**Input:** {input_desc}  ",
         f"**File type:** `{payload.get('file_type', '')}`  ",
         f"**Seed:** `{payload.get('seed', '')}`  ",
         f"**Generated (UTC):** `{payload.get('generated_at_utc', '')}`  ",
@@ -131,7 +135,7 @@ def write_results(
             "",
             "## How to read this table",
             "",
-            "The research question is not 'what accuracy does LightGBM get?', but "
+            "The research question is not raw accuracy on the standard test set, but "
             "**how much does performance drop** when moving from the temporal test "
             "set to the evasive challenge set. A larger drop-off means the model "
             "relies on patterns that do not survive AV-evasive / metamorphic samples.",

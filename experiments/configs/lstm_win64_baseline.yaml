@@ -1,0 +1,48 @@
+# LightGBM baseline on EMBER2024 Win64 — histogram-derived byte sequences + BiLSTM
+
+experiment:
+  name: lstm_win64_baseline
+  seed: 42
+  description: >
+    BiLSTM on histogram-derived byte sequences (Win64).
+    Same train/test/challenge splits as LightGBM Win64 baseline.
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed/bytes_win64
+  file_type: Win64
+  seq_len: 4096
+  train_max_samples: 120000
+  test_max_samples: 40000
+  train_max_files: 16
+  test_max_files: 8
+
+model:
+  type: lstm
+  embed_dim: 64
+  hidden_dim: 128
+  num_layers: 2
+  dropout: 0.2
+  bidirectional: true
+  train:
+    val_fraction: 0.1
+    batch_size: 128
+    epochs: 10
+    learning_rate: 0.001
+    weight_decay: 0.00001
+    patience: 3
+    use_gpu: true
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/lstm_win64_baseline
+  report_table: report/tables/lstm_win64_baseline_results
+  model_path: experiments/results/lstm_win64_baseline/model.pt
+  model_label: "BiLSTM on histogram-derived byte sequences"
+  report_title: "BiLSTM Baseline Results (EMBER2024)"
+  input_description: >
+    Fixed-length byte sequence (4096) expanded from EMBER byte histogram.
+    EMBER2024 does not ship raw PE bytes; see docs/CODING_GUIDE.md.

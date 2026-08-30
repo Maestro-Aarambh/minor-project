@@ -101,14 +101,18 @@ evasive splits.
 |--------|-----|-----|
 | `src/models/base.py` | Shared `fit / predict_proba / save / load` | Fair comparison across models |
 | `lightgbm_model.py` | LightGBM on static EMBER vectors | Strongest classical EMBER baseline |
-| `src/evaluation/metrics.py` | Accuracy, P/R/F1, ROC-AUC, PR-AUC, TPR@1% FPR | Paper metric suite |
-| `src/evaluation/evasive_eval.py` | Standard vs challenge + drop-off | Central research measurement |
-| `src/evaluation/write_results.py` | JSON + CSV + Markdown tables | Paste-ready report artifacts |
-| `run_lightgbm_baseline.py` | End-to-end entry point | One command for the whole baseline |
+| `byte_features.py` | Histogram → fixed-length byte sequence | EMBER2024 has no raw bytes; expand 256-bin histogram to seq_len |
+| `training.py` | Shared PyTorch train loop (BCE, early stop, GPU) | CNN and LSTM get identical training budget |
+| `cnn_model.py` | 1D CNN (embedding + Conv1d + max pool) | Tests **local** byte patterns |
+| `lstm_model.py` | BiLSTM (embedding + LSTM + max pool) | Tests **sequential** modeling without attention |
+| `run_sequence_baseline.py` | End-to-end CNN/LSTM runner | Same eval harness as LightGBM |
+| `run_lightgbm_baseline.py` | LightGBM runner | Static-feature baseline |
 
-First runnable file type is `Dot_Net` (config swap to Win64/Win32 later). Hyperparameters live in `experiments/configs/lightgbm_baseline.yaml`.
+Configs: `experiments/configs/cnn_win64_baseline.yaml`, `lstm_win64_baseline.yaml` (run on Colab with GPU).
 
-Still planned: `cnn_model.py`, `lstm_model.py`.
+**Byte sequence design decision:** each sample's 256-bin `histogram` field is expanded deterministically to `seq_len` (default 4096) by repeating byte values in proportion to their counts. This is documented in `byte_features.py` — cite the limitation in the paper (not original byte order).
+
+Still planned: `random_forest` (optional). Transformer is Stage 3.
 
 ---
 

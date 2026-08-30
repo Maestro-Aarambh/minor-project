@@ -58,9 +58,22 @@ report/        Final write-up, figures, tables
 python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
+pip install "signify==0.7.1"
+pip install git+https://github.com/FutureComputing4AI/EMBER2024.git
 ```
 
-GPU (CUDA) is required for transformer training; baselines run on CPU.
+GPU (CUDA) is required for CNN/LSTM/transformer training; LightGBM runs on CPU.
+
+## Run baselines
+
+```bash
+# LightGBM (static features)
+python -m src.evaluation.run_lightgbm_baseline --config experiments/configs/lightgbm_win64_baseline.yaml --skip-download
+
+# 1D CNN or BiLSTM (byte sequences — use Colab GPU for Win64)
+python -m src.evaluation.run_sequence_baseline --config experiments/configs/cnn_win64_baseline.yaml --skip-download
+python -m src.evaluation.run_sequence_baseline --config experiments/configs/lstm_win64_baseline.yaml --skip-download
+```
 
 ## Tech stack
 

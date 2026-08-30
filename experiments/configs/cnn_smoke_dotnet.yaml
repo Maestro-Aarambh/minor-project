@@ -1,0 +1,40 @@
+# Smoke test — Dot_Net, tiny sample (local dev only)
+
+experiment:
+  name: cnn_smoke_dotnet
+  seed: 42
+  description: Smoke test for CNN pipeline on Dot_Net subset.
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed/bytes_smoke_dotnet
+  file_type: Dot_Net
+  seq_len: 1024
+  train_max_samples: 800
+  test_max_samples: 400
+  train_max_files: 2
+  test_max_files: 1
+
+model:
+  type: cnn
+  embed_dim: 32
+  num_filters: [64, 128]
+  kernel_size: 5
+  dropout: 0.1
+  train:
+    batch_size: 64
+    epochs: 2
+    patience: 2
+    use_gpu: true
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/cnn_smoke_dotnet
+  report_table: report/tables/cnn_smoke_dotnet_results
+  model_path: experiments/results/cnn_smoke_dotnet/model.pt
+  model_label: "1D CNN (smoke test)"
+  report_title: "CNN Smoke Test Results"
+  input_description: "Histogram-derived byte sequence (1024), Dot_Net subset"
