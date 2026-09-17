@@ -1,0 +1,20 @@
+# Build bytes_win64 cache once — reuse for CNN, LSTM, and transformer.
+# Run locally (CPU, no GPU needed):
+#   python -m src.evaluation.run_vectorize_bytes --config experiments/configs/vectorize_bytes_win64.yaml --skip-download
+
+experiment:
+  name: vectorize_bytes_win64
+  seed: 42
+  description: >
+    Histogram-derived byte sequences for Win64 (120k train / 40k test / challenge).
+    Output: data/processed/bytes_win64/*.npy
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed/bytes_win64
+  file_type: Win64
+  seq_len: 4096
+  train_max_samples: 120000
+  test_max_samples: 40000
+  train_max_files: 16
+  test_max_files: 8

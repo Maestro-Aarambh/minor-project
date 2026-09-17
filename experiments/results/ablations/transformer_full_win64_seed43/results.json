@@ -1,0 +1,83 @@
+{
+  "experiment_name": "transformer_full_win64_seed43",
+  "description": "Tier 1 multi-seed replication of full multimodal transformer (seed 43).",
+  "config_path": "E:/minor-project/experiments/configs/ablations/transformer_full_win64_seed43.yaml",
+  "file_type": "Win64",
+  "seed": 43,
+  "n_train": 120000,
+  "seq_len": 4096,
+  "feature_dim": 6664,
+  "train_seconds": 1509.8822214999236,
+  "model_params": {
+    "static_dim": 2568,
+    "seq_len": 4096,
+    "patch_size": 16,
+    "byte_embed_dim": 32,
+    "d_model": 128,
+    "nhead": 4,
+    "num_layers": 3,
+    "ff_dim": 256,
+    "dropout": 0.2,
+    "modality": "full",
+    "n_parameters": 805777,
+    "best_epoch": 5,
+    "best_val_loss": 0.06610566133043419,
+    "device": "cuda",
+    "train_config": {
+      "seed": 43,
+      "val_fraction": 0.1,
+      "batch_size": 32,
+      "epochs": 15,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0001,
+      "patience": 3,
+      "use_gpu": true,
+      "predict_batch_size": 64
+    }
+  },
+  "model_label": "Multimodal transformer (seed 43)",
+  "input_description": "Full multimodal transformer; identical architecture to seed-42 baseline.\n",
+  "report_title": "Multi-Seed \u2014 Full Transformer seed 43 (EMBER2024 Win64)",
+  "metrics": {
+    "standard_test": {
+      "n_samples": 40000,
+      "n_malicious": 20000,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.94665,
+      "precision": 0.9712492086938173,
+      "recall": 0.92055,
+      "f1": 0.9452202484854708,
+      "roc_auc": 0.9833305162500001,
+      "pr_auc": 0.9860977448097888,
+      "tpr_at_fpr_1pct": 0.8717,
+      "fpr_at_report_point": 0.01
+    },
+    "evasive_challenge": {
+      "n_samples": 20814,
+      "n_malicious": 814,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.9559431152109157,
+      "precision": 0.44782168186423504,
+      "recall": 0.542997542997543,
+      "f1": 0.49083842309827874,
+      "roc_auc": 0.9025691646191647,
+      "pr_auc": 0.4396552278376168,
+      "tpr_at_fpr_1pct": 0.3022113022113022,
+      "fpr_at_report_point": 0.01,
+      "challenge_only_detection_rate": 0.542997542997543,
+      "challenge_only_n": 814
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": -0.009293115210915692,
+      "precision": 0.5234275268295823,
+      "recall": 0.377552457002457,
+      "f1": 0.4543818253871921,
+      "roc_auc": 0.08076135163083542,
+      "pr_auc": 0.546442516972172,
+      "tpr_at_fpr_1pct": 0.5694886977886978
+    }
+  },
+  "generated_at_utc": "2026-09-02T08:04:01.869509+00:00"
+}

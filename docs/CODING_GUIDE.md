@@ -116,20 +116,31 @@ Still planned: `random_forest` (optional). Transformer is Stage 3.
 
 ---
 
-## Chapter 3 — Transformer (`src/models/transformer/`)  [NOT YET IMPLEMENTED]
+## Chapter 3 — Transformer (`src/models/transformer/`)  [IMPLEMENTED — multimodal]
 
-**Goal:** the core contribution — a self-attention encoder over byte/opcode
-sequences.
+**Goal:** the core contribution — a self-attention encoder that fuses the EMBER
+static feature vector (LightGBM's input) with the histogram-derived byte
+sequence (CNN/LSTM's input), so architecture is compared without an input
+handicap.
 
-Planned modules:
+### Implemented modules
 
 | Module | Job | Why it exists |
 |--------|-----|---------------|
-| `tokenizer.py` | Bytes/opcodes → token ids | Vocabulary design is a research variable (byte-level vs opcode-level is an ablation axis) |
-| `positional_encoding.py` | Position information for code structure | Code position ≠ text position; the encoding choice is an ablation axis |
-| `encoder.py` | Multi-head self-attention encoder stack | The hypothesis: attention captures *long-range* structural patterns that survive metamorphic rewriting |
-| `classifier.py` | Pooling + classification head, wrapped in `BaseClassifier` | Keeps the model plug-compatible with the evaluation harness |
-| `train.py` | Training loop: class-weighted loss, seeding, checkpointing | All training behavior in one auditable place |
+| `positional_encoding.py` | Sinusoidal position info for byte-patch tokens | Attention is permutation-invariant; parameter-free encoding, ablation axis |
+| `encoder.py` | `BytePatchEmbedding` (4096 bytes → 256 tokens) + `MultimodalTransformer` (`[CLS][STATIC][P1..P256]` → encoder → logit) | Patching keeps attention quadratic in 256 tokens (fits 4 GB VRAM); the static token gives the model everything LightGBM sees |
+| `classifier.py` | `TransformerClassifier` implementing `BaseClassifier` over packed `[static | bytes]` rows | Same harness as every baseline; standardizes static features with train-rows-only mean/std (leakage-safe, saved in checkpoint) |
+| `train.py` | Two-input training loop: stratified val split from train pool only, class-weighted BCE, AdamW, grad clipping, early stop, best-checkpoint restore | Identical overfitting controls to the baseline loop |
+
+Supporting data module: `src/data/multimodal_features.py` — builds/reuses the
+`static_win64` and `bytes_win64` caches with identical seed/caps/file selection
+and hard-fails if row labels between the two caches differ (alignment check).
+
+Config: `experiments/configs/transformer_win64_baseline.yaml`.
+Runner: `python -m src.evaluation.run_transformer_baseline --config ... --skip-download`.
+
+Not yet implemented (future ablation axis): opcode tokens (`tokenizer.py`) —
+EMBER2024 JSONL has no disassembly; opcodes would require raw binaries.
 
 The key sentence for the paper (to be validated or refuted): *metamorphic
 malware changes local byte patterns but preserves global program structure;

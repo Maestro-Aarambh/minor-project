@@ -1,0 +1,19 @@
+# Tier 1 ablation manifest — run all experiments with:
+#   python -m src.ablation.run_tier1 --skip-download --skip-vectorize
+#
+# Prerequisites: static_win64 + bytes_win64 caches (already built).
+# Estimated GPU time: ~2-3 h (static-only ~15 min, bytes-only ~45 min, seeds ~45 min each).
+
+experiments:
+  - experiments/configs/ablations/transformer_static_only_win64.yaml
+  - experiments/configs/ablations/transformer_bytes_only_win64.yaml
+  - experiments/configs/ablations/transformer_full_win64_seed43.yaml
+  - experiments/configs/ablations/transformer_full_win64_seed44.yaml
+
+# Reference baseline (already completed — do not re-run unless reproducing):
+reference:
+  full_seed42: experiments/configs/transformer_win64_baseline.yaml
+  lightgbm: experiments/configs/lightgbm_win64_baseline.yaml
+
+post_analysis:
+  - python -m src.evaluation.analyze_operating_points --skip-download --skip-vectorize

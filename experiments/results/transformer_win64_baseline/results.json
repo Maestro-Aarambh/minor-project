@@ -1,0 +1,82 @@
+{
+  "experiment_name": "transformer_win64_baseline",
+  "description": "Multimodal self-attention transformer: EMBER static feature vector fused with histogram-derived byte sequence via a static token + byte-patch tokens. Same train/test/challenge splits as LightGBM/CNN/LSTM Win64 baselines.",
+  "config_path": "experiments/configs/transformer_win64_baseline.yaml",
+  "file_type": "Win64",
+  "seed": 42,
+  "n_train": 120000,
+  "seq_len": 4096,
+  "feature_dim": 6664,
+  "train_seconds": 2680.8545057000592,
+  "model_params": {
+    "static_dim": 2568,
+    "seq_len": 4096,
+    "patch_size": 16,
+    "byte_embed_dim": 32,
+    "d_model": 128,
+    "nhead": 4,
+    "num_layers": 3,
+    "ff_dim": 256,
+    "dropout": 0.2,
+    "n_parameters": 805777,
+    "best_epoch": 10,
+    "best_val_loss": 0.0788704339529698,
+    "device": "cuda",
+    "train_config": {
+      "seed": 42,
+      "val_fraction": 0.1,
+      "batch_size": 32,
+      "epochs": 15,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0001,
+      "patience": 3,
+      "use_gpu": true,
+      "predict_batch_size": 64
+    }
+  },
+  "model_label": "Multimodal transformer (static + byte sequences)",
+  "input_description": "EMBER static feature vector (dim ~2568, standardized on train rows only) fused with a fixed-length byte sequence (4096) expanded from the EMBER byte histogram. Fusion: [CLS] + static token + 256 byte-patch tokens through a 3-layer self-attention encoder.\n",
+  "report_title": "Multimodal Transformer Results (EMBER2024)",
+  "metrics": {
+    "standard_test": {
+      "n_samples": 40000,
+      "n_malicious": 20000,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.94265,
+      "precision": 0.9647732045359093,
+      "recall": 0.91885,
+      "f1": 0.9412517926654375,
+      "roc_auc": 0.9838223799999999,
+      "pr_auc": 0.9848435977824616,
+      "tpr_at_fpr_1pct": 0.83505,
+      "fpr_at_report_point": 0.00995
+    },
+    "evasive_challenge": {
+      "n_samples": 20814,
+      "n_malicious": 814,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.9514749687710196,
+      "precision": 0.4144851657940663,
+      "recall": 0.5835380835380836,
+      "f1": 0.4846938775510204,
+      "roc_auc": 0.8987420761670762,
+      "pr_auc": 0.4054436885605873,
+      "tpr_at_fpr_1pct": 0.2702702702702703,
+      "fpr_at_report_point": 0.01005,
+      "challenge_only_detection_rate": 0.5835380835380836,
+      "challenge_only_n": 814
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": -0.00882496877101957,
+      "precision": 0.550288038741843,
+      "recall": 0.3353119164619164,
+      "f1": 0.45655791511441707,
+      "roc_auc": 0.08508030383292364,
+      "pr_auc": 0.5793999092218742,
+      "tpr_at_fpr_1pct": 0.5647797297297297
+    }
+  },
+  "generated_at_utc": "2026-09-02T06:33:22.098058+00:00"
+}

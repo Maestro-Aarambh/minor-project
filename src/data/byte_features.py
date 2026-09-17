@@ -86,6 +86,25 @@ def _line_to_sequence(line: str, seq_len: int) -> tuple[np.ndarray, int]:
     return seq, int(label)
 
 
+def _iter_labeled_lines(
+    paths: list[Path],
+    *,
+    wanted_filetype: str | None,
+):
+    """Yield (stream_index, jsonl_line) for labeled rows matching optional filetype filter."""
+    stream_idx = 0
+    for line in raw_feature_iterator(paths):
+        raw = json.loads(line)
+        if wanted_filetype is not None:
+            row_ft = _normalize_filetype(str(raw.get("file_type", "")))
+            if row_ft != wanted_filetype:
+                continue
+        if raw.get("label") is None:
+            continue
+        yield stream_idx, line
+        stream_idx += 1
+
+
 def subset_to_sequences(
     data_dir: str | Path,
     subset: str,
@@ -97,36 +116,37 @@ def subset_to_sequences(
     seed: int = 42,
     filter_json_filetype: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Load one subset as (N, seq_len) int64 sequences and labels."""
+    """
+    Load one subset as (N, seq_len) int64 sequences and labels.
+
+    Two-pass streaming: pass 1 collects labels only for stratified subsampling;
+    pass 2 materializes selected rows without holding all JSONL lines in RAM.
+    """
     data_dir = Path(data_dir)
     paths = _select_paths(data_dir, subset, filetype, max_files)
     wanted = _normalize_filetype(filetype) if filter_json_filetype else None
 
     labels: list[int] = []
-    lines: list[str] = []
-    for line in raw_feature_iterator(paths):
-        raw = json.loads(line)
-        if wanted is not None:
-            row_ft = _normalize_filetype(str(raw.get("file_type", "")))
-            if row_ft != wanted:
-                continue
-        label = raw.get("label")
-        if label is None:
-            continue
-        labels.append(int(label))
-        lines.append(line)
+    for _, line in _iter_labeled_lines(paths, wanted_filetype=wanted):
+        labels.append(int(json.loads(line)["label"]))
+
+    if not labels:
+        return np.zeros((0, seq_len), dtype=np.int64), np.zeros(0, dtype=np.int32)
 
     y_all = np.asarray(labels, dtype=np.int32)
     keep = _stratified_indices(y_all, max_samples, seed)
-    selected = [lines[i] for i in keep]
+    index_to_out = {int(idx): i for i, idx in enumerate(keep)}
 
-    n = len(selected)
+    n = len(keep)
     X = np.zeros((n, seq_len), dtype=np.int64)
     y = np.zeros(n, dtype=np.int32)
-    for i, line in enumerate(selected):
+    for stream_idx, line in _iter_labeled_lines(paths, wanted_filetype=wanted):
+        out_i = index_to_out.get(stream_idx)
+        if out_i is None:
+            continue
         seq, label = _line_to_sequence(line, seq_len)
-        X[i] = seq
-        y[i] = label
+        X[out_i] = seq
+        y[out_i] = label
 
     mask = y != -1
     return X[mask], y[mask]

@@ -70,10 +70,28 @@ GPU (CUDA) is required for CNN/LSTM/transformer training; LightGBM runs on CPU.
 # LightGBM (static features)
 python -m src.evaluation.run_lightgbm_baseline --config experiments/configs/lightgbm_win64_baseline.yaml --skip-download
 
-# 1D CNN or BiLSTM (byte sequences — use Colab GPU for Win64)
-python -m src.evaluation.run_sequence_baseline --config experiments/configs/cnn_win64_baseline.yaml --skip-download
-python -m src.evaluation.run_sequence_baseline --config experiments/configs/lstm_win64_baseline.yaml --skip-download
+# 1D CNN or BiLSTM (byte sequences — vectorize locally, train on Colab GPU)
+python -m src.evaluation.run_vectorize_bytes --config experiments/configs/vectorize_bytes_win64.yaml --skip-download
+python -m src.evaluation.run_sequence_baseline --config experiments/configs/cnn_win64_baseline.yaml --skip-download --skip-vectorize
+python -m src.evaluation.run_sequence_baseline --config experiments/configs/lstm_win64_baseline.yaml --skip-download --skip-vectorize
+
+# Multimodal transformer (static + byte sequences; builds static_win64 on first run)
+python -m src.evaluation.run_transformer_baseline --config experiments/configs/transformer_win64_baseline.yaml --skip-download
 ```
+
+### Tier 1 ablation study (publication)
+
+After Win64 caches exist (`static_win64` + `bytes_win64`):
+
+```powershell
+# Modality ablations + multi-seed (static_only, bytes_only, seeds 43/44)
+python -m src.ablation.run_tier1 --skip-download --skip-vectorize
+
+# Val-calibrated thresholds + LightGBM/transformer ensemble
+python -m src.evaluation.analyze_operating_points --skip-download --skip-vectorize
+```
+
+See [`docs/TIER1_STUDY.md`](docs/TIER1_STUDY.md) for configs, IDE launch entries, and report update steps.
 
 ## Tech stack
 

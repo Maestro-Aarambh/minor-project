@@ -1,0 +1,54 @@
+# Tier 1 ablation: transformer with STATIC token only (no byte patches).
+# Compare to LightGBM (~53.8% challenge) and full multimodal (~58.4%).
+
+experiment:
+  name: transformer_static_only_win64
+  seed: 42
+  description: >
+    Tier 1 modality ablation — static EMBER features only via transformer encoder.
+    Same splits/training budget as full multimodal transformer.
+
+data:
+  raw_dir: data/raw
+  static_dir: data/processed/static_win64
+  bytes_dir: data/processed/bytes_win64
+  file_type: Win64
+  seq_len: 4096
+  train_max_samples: 120000
+  test_max_samples: 40000
+  train_max_files: 16
+  test_max_files: 8
+
+model:
+  type: multimodal_transformer
+  modality: static_only
+  patch_size: 16
+  byte_embed_dim: 32
+  d_model: 128
+  nhead: 4
+  num_layers: 3
+  ff_dim: 256
+  dropout: 0.2
+  train:
+    val_fraction: 0.1
+    batch_size: 32
+    epochs: 15
+    learning_rate: 0.0003
+    weight_decay: 0.0001
+    patience: 3
+    use_gpu: true
+    predict_batch_size: 64
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/ablations/transformer_static_only_win64
+  report_table: report/tables/ablations/transformer_static_only_win64_results
+  model_path: experiments/results/ablations/transformer_static_only_win64/model.pt
+  model_label: "Transformer (static only)"
+  report_title: "Tier 1 Ablation — Static-Only Transformer (EMBER2024 Win64)"
+  input_description: >
+    EMBER static vector (dim ~2568) as a single token + CLS through self-attention.
+    Byte patch branch disabled.

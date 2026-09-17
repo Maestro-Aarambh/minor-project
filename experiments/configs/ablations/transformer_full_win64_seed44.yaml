@@ -1,0 +1,51 @@
+# Tier 1 multi-seed: full multimodal transformer, seed 44.
+
+experiment:
+  name: transformer_full_win64_seed44
+  seed: 44
+  description: >
+    Tier 1 multi-seed replication of full multimodal transformer (seed 44).
+
+data:
+  raw_dir: data/raw
+  static_dir: data/processed/static_win64
+  bytes_dir: data/processed/bytes_win64
+  file_type: Win64
+  seq_len: 4096
+  train_max_samples: 120000
+  test_max_samples: 40000
+  train_max_files: 16
+  test_max_files: 8
+
+model:
+  type: multimodal_transformer
+  modality: full
+  patch_size: 16
+  byte_embed_dim: 32
+  d_model: 128
+  nhead: 4
+  num_layers: 3
+  ff_dim: 256
+  dropout: 0.2
+  train:
+    val_fraction: 0.1
+    batch_size: 32
+    epochs: 15
+    learning_rate: 0.0003
+    weight_decay: 0.0001
+    patience: 3
+    use_gpu: true
+    predict_batch_size: 64
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/ablations/transformer_full_win64_seed44
+  report_table: report/tables/ablations/transformer_full_win64_seed44_results
+  model_path: experiments/results/ablations/transformer_full_win64_seed44/model.pt
+  model_label: "Multimodal transformer (seed 44)"
+  report_title: "Multi-Seed — Full Transformer seed 44 (EMBER2024 Win64)"
+  input_description: >
+    Full multimodal transformer; identical architecture to seed-42 baseline.

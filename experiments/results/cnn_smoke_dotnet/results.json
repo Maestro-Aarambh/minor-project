@@ -1,0 +1,72 @@
+{
+  "experiment_name": "cnn_smoke_dotnet",
+  "description": "Smoke test for CNN pipeline on Dot_Net subset.",
+  "config_path": "experiments/configs/cnn_smoke_dotnet.yaml",
+  "file_type": "Dot_Net",
+  "seed": 42,
+  "n_train": 800,
+  "seq_len": 1024,
+  "feature_dim": 1024,
+  "train_seconds": 3.6648357999511063,
+  "model_params": {
+    "seq_len": 1024,
+    "best_epoch": 2,
+    "best_val_loss": 0.4162176549434662,
+    "device": "cuda",
+    "train_config": {
+      "seed": 42,
+      "val_fraction": 0.1,
+      "batch_size": 64,
+      "epochs": 2,
+      "learning_rate": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 2,
+      "use_gpu": true
+    }
+  },
+  "model_label": "1D CNN (smoke test)",
+  "input_description": "Histogram-derived byte sequence (1024), Dot_Net subset",
+  "report_title": "CNN Smoke Test Results",
+  "metrics": {
+    "standard_test": {
+      "n_samples": 400,
+      "n_malicious": 200,
+      "n_benign": 200,
+      "threshold": 0.5,
+      "accuracy": 0.76,
+      "precision": 0.825,
+      "recall": 0.66,
+      "f1": 0.7333333333333333,
+      "roc_auc": 0.8313500000000001,
+      "pr_auc": 0.837801450350266,
+      "tpr_at_fpr_1pct": 0.14,
+      "fpr_at_report_point": 0.01
+    },
+    "evasive_challenge": {
+      "n_samples": 1029,
+      "n_malicious": 829,
+      "n_benign": 200,
+      "threshold": 0.5,
+      "accuracy": 0.3032069970845481,
+      "precision": 0.8333333333333334,
+      "recall": 0.16887816646562123,
+      "f1": 0.28084252758274825,
+      "roc_auc": 0.6011158021712907,
+      "pr_auc": 0.8358161897890479,
+      "tpr_at_fpr_1pct": 0.013268998793727383,
+      "fpr_at_report_point": 0.01,
+      "challenge_only_detection_rate": 0.16887816646562123,
+      "challenge_only_n": 829
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": 0.4567930029154519,
+      "precision": -0.008333333333333415,
+      "recall": 0.49112183353437877,
+      "f1": 0.45249080575058503,
+      "roc_auc": 0.23023419782870946,
+      "pr_auc": 0.0019852605612180607,
+      "tpr_at_fpr_1pct": 0.12673100120627262
+    }
+  },
+  "generated_at_utc": "2026-08-30T12:57:42.210889+00:00"
+}

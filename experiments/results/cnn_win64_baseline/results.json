@@ -1,0 +1,72 @@
+{
+  "experiment_name": "cnn_win64_baseline",
+  "description": "1D CNN on histogram-derived byte sequences (Win64). Same train/test/challenge splits as LightGBM Win64 baseline.",
+  "config_path": "experiments/configs/cnn_win64_baseline.yaml",
+  "file_type": "Win64",
+  "seed": 42,
+  "n_train": 120000,
+  "seq_len": 4096,
+  "feature_dim": 4096,
+  "train_seconds": 2870.182229500031,
+  "model_params": {
+    "seq_len": 4096,
+    "best_epoch": 10,
+    "best_val_loss": 0.26168650261899257,
+    "device": "cuda",
+    "train_config": {
+      "seed": 42,
+      "val_fraction": 0.1,
+      "batch_size": 128,
+      "epochs": 10,
+      "learning_rate": 0.001,
+      "weight_decay": 1e-05,
+      "patience": 3,
+      "use_gpu": true
+    }
+  },
+  "model_label": "1D CNN on histogram-derived byte sequences",
+  "input_description": "Fixed-length byte sequence (4096) expanded from EMBER byte histogram. EMBER2024 does not ship raw PE bytes; see docs/CODING_GUIDE.md.\n",
+  "report_title": "1D CNN Baseline Results (EMBER2024)",
+  "metrics": {
+    "standard_test": {
+      "n_samples": 40000,
+      "n_malicious": 20000,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.885725,
+      "precision": 0.9156295458218846,
+      "recall": 0.84975,
+      "f1": 0.8814605430357096,
+      "roc_auc": 0.9540753949999999,
+      "pr_auc": 0.9536651190411892,
+      "tpr_at_fpr_1pct": 0.448,
+      "fpr_at_report_point": 0.01
+    },
+    "evasive_challenge": {
+      "n_samples": 20814,
+      "n_malicious": 814,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.8988181031997694,
+      "precision": 0.14891304347826087,
+      "recall": 0.3366093366093366,
+      "f1": 0.20648078372268275,
+      "roc_auc": 0.7967398648648649,
+      "pr_auc": 0.16315592959110709,
+      "tpr_at_fpr_1pct": 0.085995085995086,
+      "fpr_at_report_point": 0.00995,
+      "challenge_only_detection_rate": 0.3366093366093366,
+      "challenge_only_n": 814
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": -0.013093103199769418,
+      "precision": 0.7667165023436238,
+      "recall": 0.5131406633906634,
+      "f1": 0.6749797593130269,
+      "roc_auc": 0.15733553013513502,
+      "pr_auc": 0.7905091894500822,
+      "tpr_at_fpr_1pct": 0.362004914004914
+    }
+  },
+  "generated_at_utc": "2026-09-01T19:27:37.736307+00:00"
+}

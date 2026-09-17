@@ -1,0 +1,83 @@
+{
+  "experiment_name": "transformer_bytes_only_win64",
+  "description": "Tier 1 modality ablation \u2014 histogram-derived byte patches only via transformer. Static PE feature branch disabled.",
+  "config_path": "E:/minor-project/experiments/configs/ablations/transformer_bytes_only_win64.yaml",
+  "file_type": "Win64",
+  "seed": 42,
+  "n_train": 120000,
+  "seq_len": 4096,
+  "feature_dim": 6664,
+  "train_seconds": 1859.4335496999556,
+  "model_params": {
+    "static_dim": 2568,
+    "seq_len": 4096,
+    "patch_size": 16,
+    "byte_embed_dim": 32,
+    "d_model": 128,
+    "nhead": 4,
+    "num_layers": 3,
+    "ff_dim": 256,
+    "dropout": 0.2,
+    "modality": "bytes_only",
+    "n_parameters": 805777,
+    "best_epoch": 7,
+    "best_val_loss": 0.2534026359816392,
+    "device": "cuda",
+    "train_config": {
+      "seed": 42,
+      "val_fraction": 0.1,
+      "batch_size": 32,
+      "epochs": 15,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0001,
+      "patience": 3,
+      "use_gpu": true,
+      "predict_batch_size": 64
+    }
+  },
+  "model_label": "Transformer (bytes only)",
+  "input_description": "Histogram-derived byte sequence as 256 patch tokens + CLS through self-attention. Static EMBER feature branch disabled.\n",
+  "report_title": "Tier 1 Ablation \u2014 Bytes-Only Transformer (EMBER2024 Win64)",
+  "metrics": {
+    "standard_test": {
+      "n_samples": 40000,
+      "n_malicious": 20000,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.892775,
+      "precision": 0.9152175062106876,
+      "recall": 0.86575,
+      "f1": 0.8897967573678666,
+      "roc_auc": 0.9582614175,
+      "pr_auc": 0.9604612382927129,
+      "tpr_at_fpr_1pct": 0.5776,
+      "fpr_at_report_point": 0.01
+    },
+    "evasive_challenge": {
+      "n_samples": 20814,
+      "n_malicious": 814,
+      "n_benign": 20000,
+      "threshold": 0.5,
+      "accuracy": 0.8977130777361392,
+      "precision": 0.1526677231907026,
+      "recall": 0.35503685503685506,
+      "f1": 0.21352050240118212,
+      "roc_auc": 0.788714742014742,
+      "pr_auc": 0.18098627243913504,
+      "tpr_at_fpr_1pct": 0.14004914004914004,
+      "fpr_at_report_point": 0.0101,
+      "challenge_only_detection_rate": 0.35503685503685506,
+      "challenge_only_n": 814
+    },
+    "dropoff_standard_minus_evasive": {
+      "accuracy": -0.00493807773613919,
+      "precision": 0.762549783019985,
+      "recall": 0.510713144963145,
+      "f1": 0.6762762549666844,
+      "roc_auc": 0.16954667548525804,
+      "pr_auc": 0.7794749658535779,
+      "tpr_at_fpr_1pct": 0.43755085995085996
+    }
+  },
+  "generated_at_utc": "2026-09-02T07:37:50.984642+00:00"
+}

@@ -1,0 +1,24 @@
+# Post-hoc operating-point analysis (Tier 1).
+# Uses existing LightGBM + full multimodal transformer checkpoints.
+
+experiment:
+  name: tier1_operating_points
+  seed: 42
+
+data:
+  static_dir: data/processed/static_win64
+  bytes_dir: data/processed/bytes_win64
+  val_fraction: 0.1   # same as model training
+
+models:
+  lightgbm: experiments/results/lightgbm_win64_baseline/model.txt
+  transformer: experiments/results/transformer_win64_baseline/model.pt
+
+evaluation:
+  threshold_default: 0.5
+  target_fpr: 0.01
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/tier1_operating_points
+  report_table: report/tables/ablations/tier1_operating_points.md

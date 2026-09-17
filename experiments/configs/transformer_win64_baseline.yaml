@@ -1,0 +1,60 @@
+# Multimodal transformer on EMBER2024 Win64 — static features + byte sequences
+# fused with self-attention. Same splits/caps/seed as every other Win64 baseline.
+#
+# Run (bytes_win64 already built; static_win64 built on first run if missing):
+#   python -m src.evaluation.run_transformer_baseline --config experiments/configs/transformer_win64_baseline.yaml --skip-download
+
+experiment:
+  name: transformer_win64_baseline
+  seed: 42
+  description: >
+    Multimodal self-attention transformer: EMBER static feature vector fused
+    with histogram-derived byte sequence via a static token + byte-patch tokens.
+    Same train/test/challenge splits as LightGBM/CNN/LSTM Win64 baselines.
+
+data:
+  raw_dir: data/raw
+  static_dir: data/processed/static_win64
+  bytes_dir: data/processed/bytes_win64
+  file_type: Win64
+  seq_len: 4096
+  train_max_samples: 120000
+  test_max_samples: 40000
+  train_max_files: 16
+  test_max_files: 8
+
+model:
+  type: multimodal_transformer
+  patch_size: 16          # 4096 bytes -> 256 tokens (attention fits 4 GB VRAM)
+  byte_embed_dim: 32
+  d_model: 128
+  nhead: 4
+  num_layers: 3
+  ff_dim: 256
+  dropout: 0.2
+  modality: full   # full | static_only | bytes_only (Tier 1 ablation axis)
+  train:
+    val_fraction: 0.1     # carved from the training pool only — never test
+    batch_size: 32
+    epochs: 15
+    learning_rate: 0.0003
+    weight_decay: 0.0001
+    patience: 3           # early stop on val loss; best checkpoint restored
+    use_gpu: true
+    predict_batch_size: 64
+
+evaluation:
+  threshold: 0.5
+  mix_test_benign_into_challenge: true
+
+output:
+  results_dir: experiments/results/transformer_win64_baseline
+  report_table: report/tables/transformer_win64_baseline_results
+  model_path: experiments/results/transformer_win64_baseline/model.pt
+  model_label: "Multimodal transformer (static + byte sequences)"
+  report_title: "Multimodal Transformer Results (EMBER2024)"
+  input_description: >
+    EMBER static feature vector (dim ~2568, standardized on train rows only)
+    fused with a fixed-length byte sequence (4096) expanded from the EMBER byte
+    histogram. Fusion: [CLS] + static token + 256 byte-patch tokens through a
+    3-layer self-attention encoder.
